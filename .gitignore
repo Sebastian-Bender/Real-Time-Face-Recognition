@@ -1,0 +1,11 @@
+.ipynb_checkpoints/
+.DS_Store
+aug_data/
+data/
+logs/
+lfw/
+persons/
+temp_image/
+lfw.tgz
+app_face_*
+*.h5
