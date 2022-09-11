@@ -53,9 +53,12 @@ def verify(model, detection_threshold, verification_threshold):
     # Build results array
     best_match = [0, None]
     for directory in os.listdir('persons'):
+        print(directory)
         if '.' not in directory:
             results = []
             for image in os.listdir(os.path.join('persons', directory)):
+                if '.jpg' not in image:
+                    continue
                 
                 input_img = preprocess(os.path.join('temp_image', 'input_image.jpg'))
                 validation_img = preprocess(os.path.join('persons', directory, image))
@@ -106,11 +109,11 @@ while cap.isOpened():
 
         cv2.imwrite(os.path.join('temp_image', 'input_image.jpg'), cv2.resize(frame, (250, 250)))
         # Run verification
-        results, verified, person = verify(siamese_model, 0.5, 0.7)
+        results, verified, person = verify(siamese_model, 0.7, 0.5)
         print(verified)
         print(person)
 
-    if y_hat <= 0.5:
+    if yhat[0] <= 0.5:
         person = '_'
     
     if yhat[0] > 0.5: 
