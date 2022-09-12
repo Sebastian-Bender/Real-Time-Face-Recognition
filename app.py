@@ -69,11 +69,12 @@ def verify(model, detection_threshold, verification_threshold):
             
             # Detection Threshold: Metric above which a prediciton is considered positive 
             detection = np.sum(np.array(results) > detection_threshold)
-            #print(results)
-            #print(detection)
+            print(results)
+            print(detection)
             
             # Verification Threshold: Proportion of positive predictions / total positive samples 
             verification = detection / len(os.listdir(os.path.join('persons', directory))) 
+            print(verification)
             if verification > best_match[0]:
                 best_match[0] = verification
                 best_match[1] = directory
@@ -88,7 +89,7 @@ def verify(model, detection_threshold, verification_threshold):
     
     return results, verified, person
 
-
+color = (0, 0, 255)
 person = '_'
 
 cap = cv2.VideoCapture(0)
@@ -96,7 +97,8 @@ width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 while cap.isOpened():
     _ , frame = cap.read()
-    frame = frame[int(height/2-400):int(height/2+400), int(width/2-400):int(width/2+400), :]
+    #frame = frame[int(height/2-400):int(height/2+400), int(width/2-400):int(width/2+400), :]
+    frame = frame[:1000, 500:1500, :]
     
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     resized = tf.image.resize(rgb, (120,120))
@@ -109,26 +111,36 @@ while cap.isOpened():
 
         cv2.imwrite(os.path.join('temp_image', 'input_image.jpg'), cv2.resize(frame, (250, 250)))
         # Run verification
-        results, verified, person = verify(siamese_model, 0.7, 0.5)
-        print(verified)
-        print(person)
+        results, verified, person = verify(siamese_model, 0.5, 0.5)
+
 
     if yhat[0] <= 0.5:
         person = '_'
     
     if yhat[0] > 0.5: 
+        #if person == '_':
+        # Save input image to application_data/input_image folder 
+
+        cv2.imwrite(os.path.join('temp_image', 'input_image.jpg'), cv2.resize(frame, (250, 250)))
+        # Run verification
+        results, verified, person = verify(siamese_model, 0.5, 0.5)
+        if verified:
+            color = (0, 255, 0)
+        else:
+            color = (0, 0, 255)
+
         # Controls the main rectangle
         cv2.rectangle(frame, 
                       tuple(np.multiply(sample_coords[:2], [1000, 1000]).astype(int)),
                       tuple(np.multiply(sample_coords[2:], [1000, 1000]).astype(int)), 
-                            (255,0,0), 2)
+                            color, 2)
         # Controls the label rectangle
         cv2.rectangle(frame, 
                       tuple(np.add(np.multiply(sample_coords[:2], [1000, 1000]).astype(int), 
                                     [0,-30])),
                       tuple(np.add(np.multiply(sample_coords[:2], [1000, 1000]).astype(int),
                                     [80,0])), 
-                            (255,0,0), -1)
+                            color, -1)
         
         # Controls the text rendered
         cv2.putText(frame, person, tuple(np.add(np.multiply(sample_coords[:2], [1000, 1000]).astype(int),
