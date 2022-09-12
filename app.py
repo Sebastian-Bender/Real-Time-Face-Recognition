@@ -106,14 +106,6 @@ while cap.isOpened():
     yhat = facetracker.predict(np.expand_dims(resized/255,0))
     sample_coords = yhat[1][0]
 
-    if cv2.waitKey(10) & 0xFF == ord('v'):
-        # Save input image to application_data/input_image folder 
-
-        cv2.imwrite(os.path.join('temp_image', 'input_image.jpg'), cv2.resize(frame, (250, 250)))
-        # Run verification
-        results, verified, person = verify(siamese_model, 0.5, 0.5)
-
-
     if yhat[0] <= 0.5:
         person = '_'
     

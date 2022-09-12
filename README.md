@@ -8,3 +8,5 @@
 5. Use capture_image.py to create images and place them in a folder with your name inside of the persons folder. 
 6. run app.py
 
+
+![](demo.gif)
