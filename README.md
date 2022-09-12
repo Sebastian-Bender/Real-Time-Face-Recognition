@@ -9,4 +9,4 @@
 6. run app.py
 
 
-![](demo.gif| width=100)
+![](demo.gif | width=100)
